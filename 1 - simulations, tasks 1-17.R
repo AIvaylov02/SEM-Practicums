@@ -237,7 +237,8 @@ result <- prob_eggs(2, 6, 1000000)
 
 sim_test <- function(wrong_answers_count, right_answers_count, questions_count, minimum_right_answers) {
   question <- c(FALSE, TRUE)
-  answer_sheet <- sample(question, questions_count, replace=TRUE, prob=c(wrong_answers_count / questions_count, right_answers_count / questions_count))
+  possible_answers_count <- wrong_answers_count + right_answers_count
+  answer_sheet <- sample(question, questions_count, replace=TRUE, prob=c(wrong_answers_count / possible_answers_count, right_answers_count / possible_answers_count))
   sum(answer_sheet) >= minimum_right_answers 
 }
 
@@ -308,8 +309,9 @@ sim_conditional_balls <- function() {
 
 prob_conditional_balls <- function(N) {
   result <- replicate(N, sim_conditional_balls())
-  A <- sum(result[1,]) / N
-  interesting_results <- result[2, result[2,] != 2]
+  A <- sum(result[1,]) / N  # result[1, ] съдържа резултата на събитието, дали сме изтеглили зелена топка
+  interesting_results <- result[2, result[2,] != 2]  # result [2, ] засяга събитието B - т.е всичките му резултати, но ти ни вълнува само ако сме изтеглили зелена топка (Бяхме маркирали B<-2, ако такава не се
+  #                                                     е случила, тоест този сценарий да не се разглежда) 
   B <- sum(interesting_results) / length(interesting_results)
   c(A,B)
 }
@@ -431,7 +433,7 @@ sim_neighbours <- function(random_people_count) {
   # функция which -> връща индексите на всеки TRUE-ти елемент според условието. Алтернатива е функцията match
   
   # Логически вектор? Вектор съдържащ стойности TRUE или FALSE, затова трябва като първи аргумент да подадем проверка върху вектор
-  georgi_index <- which(config == 'g')
+  georgi_index <- which(config == 'g')  # Ппц which връща масив от индекси, върху, чийто елементи проверката е върнала истина. Тук е гарантирано, че той винаги е само един
   ivan_index <- which(config == 'i')
   abs(georgi_index - ivan_index) == 1
 }
